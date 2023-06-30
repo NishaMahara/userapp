@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shringar1_app/authentication/login_screen.dart';
 import 'package:shringar1_app/mainScreens/main_screen.dart';
 
+import '../assistants/assistant_methods.dart';
 import '../global/global.dart';
 
 class MySplashScreen extends StatefulWidget
@@ -16,7 +17,8 @@ class MySplashScreen extends StatefulWidget
 class _MySplashScreenState extends State<MySplashScreen>
 {
   startTimer() {
-    Timer(const Duration(seconds: 3), () async
+    fAuth.currentUser != null? AssistantMethods.readCurrentOnlineUserInfo(): null;
+    Timer(const Duration(seconds: 5), () async
     {
       if(await fAuth.currentUser != null)
        {
@@ -43,7 +45,7 @@ class _MySplashScreenState extends State<MySplashScreen>
   Widget build(BuildContext context)
   {
     return  Container(
-      color: Colors.purple,
+      color: Colors.white,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -51,14 +53,8 @@ class _MySplashScreenState extends State<MySplashScreen>
           children: [
             Image.asset("images/logo1.png"),
             const SizedBox(height: 10,),
-            const Text(
-              "Beauty at your door step",
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),
-            ),
+
+
           ],
 
         ),

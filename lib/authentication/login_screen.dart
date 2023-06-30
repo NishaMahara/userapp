@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shringar1_app/Widgets/progress_dialog.dart';
@@ -58,9 +59,23 @@ class _LoginScreenState extends State<LoginScreen>
     if(firebaseUser != null)
     {
 
-      currentFirebaseUser = firebaseUser;
-      Fluttertoast.showToast(msg:"login successful.");
-      Navigator.push(context, MaterialPageRoute(builder: (c)=>  const MySplashScreen()));
+      DatabaseReference beauticiansRef = FirebaseDatabase.instance.ref().child(
+          "users");
+      beauticiansRef.child(firebaseUser.uid).once().then((beauticianKey) {
+        final snap = beauticianKey.snapshot;
+        if (snap.value != null) {
+          currentFirebaseUser = firebaseUser;
+          Fluttertoast.showToast(msg: "Login sucessful");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (c) => const MySplashScreen()));
+        }
+        else {
+          Fluttertoast.showToast(msg: "No record exist with this email");
+          fAuth.signOut();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (c) => const MySplashScreen()));
+        }
+      });
     }
     else
     {
@@ -75,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen>
   {
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body:SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -94,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen>
                 "Login as User ",
                 style: TextStyle(
                   fontSize: 26,
-                  color: Colors.grey,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
 
                 ),
@@ -102,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen>
               TextField(
                 controller: emailTextEditingController,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                     labelText: "Email",
@@ -120,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen>
                       fontSize: 10,
                     ),
                     labelStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 16,
                     )
                 ),
@@ -130,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen>
                 controller: passwordTextEditingController,
                 keyboardType: TextInputType.text,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                   labelText: "Password",
@@ -148,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen>
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.black,
                     fontSize: 16,
                   ),
                 ),
@@ -170,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen>
                 child:const Text(
                   "Login",
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: Colors.black,
                     fontSize: 18,
                   ),
                 ),
@@ -179,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen>
               TextButton(
                 child: const Text(
                   "Don't have an account? Sign up",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.brown),
                 ),
                 onPressed: ()
                 {

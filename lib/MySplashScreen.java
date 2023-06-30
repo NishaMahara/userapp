@@ -17,16 +17,16 @@ class _MySplashScreenState extends State<MySplashScreen>
   startTimer() {
     Timer(const Duration(seconds: 3), () async
     {
-      // //if(await fAuth.currentUser != null)
-      // {
-      //      CurrentFirebaseUser = fAuth.currentUser;
-      //   Navigator.push(context, MaterialPageRoute(builder: (c)=> MainScreen()));
-      //
-      // }
-      // else
-      //   {
-      //   Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen())));
-      //   }
+       if(await fAuth.currentUser != null)
+       {
+            CurrentFirebaseUser = fAuth.currentUser;
+         Navigator.push(context, MaterialPageRoute(builder: (c)=> MainScreen()));
+
+       }
+       else
+         {
+         Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen())));
+         }
 
       Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen()));
     });

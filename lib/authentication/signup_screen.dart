@@ -70,8 +70,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
 
       };
-      DatabaseReference beauticiansRef = FirebaseDatabase.instance.ref().child("users");
-      beauticiansRef.child(firebaseUser.uid).set(userMap);
+      DatabaseReference usersRef = FirebaseDatabase.instance.ref().child("users");
+      usersRef.child(firebaseUser.uid).set(userMap);
 
       currentFirebaseUser = firebaseUser;
       Fluttertoast.showToast(msg:"Account has been Created.");
@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -115,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextField(
                 controller: nameTextEditingController,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                     labelText: "Name",
@@ -129,11 +129,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderSide: BorderSide(color:Colors.grey),
                     ),
                     hintStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 10,
                     ),
                     labelStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 16,
                     )
                 ),
@@ -142,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextField(
                 controller: emailTextEditingController,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                     labelText: "Email",
@@ -160,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontSize: 10,
                     ),
                     labelStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 16,
                     )
                 ),
@@ -170,7 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: phoneTextEditingController,
                 keyboardType: TextInputType.phone,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                     labelText: "Phone",
@@ -188,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontSize: 10,
                     ),
                     labelStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 16,
                     )
                 ),
@@ -198,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: passwordTextEditingController,
                 keyboardType: TextInputType.text,
                 style: TextStyle(
-                    color: Colors.grey
+                    color: Colors.black
                 ),
                 decoration:  const InputDecoration(
                     labelText: "Password",
@@ -216,7 +216,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontSize: 10,
                     ),
                     labelStyle: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black
+                      ,
                       fontSize: 16,
                     )
                 ),
@@ -235,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child:const Text(
                   "Create Account",
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: Colors.black,
                     fontSize: 18,
                   ),
                 ),
@@ -244,7 +245,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextButton(
                 child: const Text(
                   "Already have an Account? Login Here",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.brown),
                 ),
                 onPressed: ()
                 {
