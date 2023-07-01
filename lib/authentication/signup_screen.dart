@@ -197,6 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextField(
                 controller: passwordTextEditingController,
                 keyboardType: TextInputType.text,
+                obscureText: true,
                 style: TextStyle(
                     color: Colors.black
                 ),

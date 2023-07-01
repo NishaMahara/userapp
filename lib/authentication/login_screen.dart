@@ -144,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen>
               TextField(
                 controller: passwordTextEditingController,
                 keyboardType: TextInputType.text,
+                obscureText: true,
                 style: TextStyle(
                     color: Colors.black
                 ),

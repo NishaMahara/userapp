@@ -18,6 +18,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen>
 {
+  TextEditingController serviceTextEditingController = TextEditingController();
+
    final Completer<GoogleMapController> _controllerGoogleMap = Completer();
    GoogleMapController? newGoogleMapController;
 
@@ -71,7 +73,9 @@ locateUserPosition() async
   Widget build(BuildContext context)
   {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+      ),
       drawer: Container(
         width: 260,
         child: Theme(
@@ -162,35 +166,46 @@ locateUserPosition() async
                         color: Colors.grey,
                       ),
                       const SizedBox(height: 16.0),
-                      //Service
-                      Row(
-                        children: [
 
-                          const SizedBox(width: 12.0,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Beauty Service",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              Text(
-                                "Service you need ",
-                                style: const TextStyle(color: Colors.grey, fontSize: 14),
-                              ),
-                            ],
-                          )
+                   //new services
 
 
-                        ],
+                      TextField(
+                        controller: serviceTextEditingController,
+                        style: TextStyle(
+                            color: Colors.white70
+                        ),
+                        decoration:  const InputDecoration(
+                            labelText: "Services",
+                            hintText: "Beauty service you need",
+
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:Colors.grey),
+                            ),
+
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:Colors.grey),
+                            ),
+                            hintStyle: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 10,
+                            ),
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            )
+                        ),
+
                       ),
-                      const SizedBox(height: 10.0),
-                      const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 16.0),
+
+
+
+
+
+
+
+
+
 
                       ElevatedButton(
                         child: const Text(
