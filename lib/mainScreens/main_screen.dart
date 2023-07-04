@@ -20,6 +20,9 @@ class _MainScreenState extends State<MainScreen>
 {
   TextEditingController serviceTextEditingController = TextEditingController();
 
+  List<String> serviceTypeList = ["haircut", "eyebrow", "nailart"];
+  String? selectedServiceType;
+
    final Completer<GoogleMapController> _controllerGoogleMap = Completer();
    GoogleMapController? newGoogleMapController;
 
@@ -117,7 +120,7 @@ locateUserPosition() async
 
           //ui for searching location
           Positioned(
-            bottom: 0,
+            bottom: 8,
             left: 0,
             right: 0,
             child: AnimatedSize(
@@ -170,34 +173,92 @@ locateUserPosition() async
                    //new services
 
 
-                      TextField(
-                        controller: serviceTextEditingController,
-                        style: TextStyle(
-                            color: Colors.white70
+                      // TextField(
+                      //   controller: serviceTextEditingController,
+                      //   style: TextStyle(
+                      //       color: Colors.white70
+                      //   ),
+                      //   decoration:  const InputDecoration(
+                      //       labelText: "Services",
+                      //       hintText: "Beauty service you need",
+                      //
+                      //       enabledBorder: UnderlineInputBorder(
+                      //         borderSide: BorderSide(color:Colors.grey),
+                      //       ),
+                      //
+                      //       focusedBorder: UnderlineInputBorder(
+                      //         borderSide: BorderSide(color:Colors.grey),
+                      //       ),
+                      //       hintStyle: TextStyle(
+                      //         color: Colors.white70,
+                      //         fontSize: 10,
+                      //       ),
+                      //       labelStyle: TextStyle(
+                      //         color: Colors.white,
+                      //         fontSize: 20,
+                      //       )
+                      //   ),
+                      //
+                      // ),
+                      const SizedBox(height: 10.0),
+                      DropdownButton(
+                        iconSize: 45,
+                        dropdownColor: Colors.grey,
+                        hint: const Text(
+                          "please choose service type",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.grey,
+                          ),
                         ),
-                        decoration:  const InputDecoration(
-                            labelText: "Services",
-                            hintText: "Beauty service you need",
-
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color:Colors.grey),
+                        value: selectedServiceType,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedServiceType = newValue.toString();
+                          });
+                        },
+                        items: serviceTypeList.map((service) {
+                          return DropdownMenuItem(
+                            child: Text(
+                              service,
+                              style: const TextStyle(color: Colors.white),
                             ),
-
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color:Colors.grey),
-                            ),
-                            hintStyle: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 10,
-                            ),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            )
-                        ),
-
+                            value: service,
+                          );
+                        }).toList(),
                       ),
 
+
+
+                      // DropdownButton(
+              //   hint: const Text(
+              //     "please choose service type",
+              //     style:TextStyle(
+              //       fontSize: 14.0,
+              //       color: Colors.grey,
+              //
+              //     )
+              //   )
+              //       value: selectedServiceType,
+              //   onChanged: (newValue)
+              //   {
+              //     setState(() {
+              //       selectedServiceType = newValue.toString();
+              //
+              //
+              //     });
+              //   },
+              //   items: serviceTypeList.map((service){
+              //     return DropdownMenuItem(
+              //     child: Text(
+              //      service,
+              //     style: const TextStyle(color: Colors.grey),
+              //     ),
+              //     value: service,
+              //     );
+              // }).toList(),
+              //    ),
+              //
 
 
 
