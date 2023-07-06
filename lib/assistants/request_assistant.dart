@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:http/http.dart' as http;
-
 class RequestAssistant {
   static Future<dynamic> receiveRequest(String url) async
   {

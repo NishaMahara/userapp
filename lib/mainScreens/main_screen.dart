@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shringar1_app/assistants/assistant_methods.dart';
+import 'package:shringar1_app/infoHandler/app_info.dart';
 import 'package:shringar1_app/widgets/my_drawer.dart';
+import 'package:shringar1_app/assistants/assistant_methods.dart';
 
 import '../authentication/login_screen.dart';
 import '../global/global.dart';
@@ -153,8 +156,10 @@ locateUserPosition() async
                                  style: TextStyle(color: Colors.white, fontSize: 16),
                                ),
                                Text(
-                                 "Your Location",
-                                 style: const TextStyle(color: Colors.grey, fontSize: 14),
+                                 Provider.of<AppInfo>(context).userHomeLocation != null
+                                     ? Provider.of<AppInfo>(context).userHomeLocation!.locationName!
+                                         : "not getting address",
+                                 style: const TextStyle(color: Colors.white, fontSize: 14),
                                ),
                              ],
                            )

@@ -6,6 +6,7 @@ import 'package:shringar1_app/mainScreens/main_screen.dart';
 import '../assistants/assistant_methods.dart';
 import '../global/global.dart';
 
+
 class MySplashScreen extends StatefulWidget
 {
   const MySplashScreen({super.key});
