@@ -157,7 +157,7 @@ locateUserPosition() async
                                ),
                                Text(
                                  Provider.of<AppInfo>(context).userHomeLocation != null
-                                     ? Provider.of<AppInfo>(context).userHomeLocation!.locationName!
+                                     ? Provider.of<AppInfo>(context).userHomeLocation!.locationName! .substring(0,24) + "..."
                                          : "not getting address",
                                  style: const TextStyle(color: Colors.white, fontSize: 14),
                                ),
