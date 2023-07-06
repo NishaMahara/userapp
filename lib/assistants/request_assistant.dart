@@ -18,12 +18,12 @@ class RequestAssistant {
       }
       else
       {
-        return "Error occured.";
+        return "Error occured,Failed. No Response";
       }
     }
     catch(exp)
     {
-      return exp.toString() + "Error Occured. No response.";
+      return "Error Occured,Failed. No response.";
     }
     }
   }

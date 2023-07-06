@@ -63,7 +63,8 @@ locateUserPosition() async
    CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14 );
 
    newGoogleMapController!.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
+   String humanReadableAddress = await AssistantMethods.searchAddressForGeographicCoOrdinates(userCurrentPosition!,context);
+    print("this is your address = " + humanReadableAddress);
 }
 @override
   void initState() {

@@ -8,12 +8,22 @@ import 'package:shringar1_app/models/user_model.dart';
 
 class AssistantMethods
 {
-  static Future<String> searchAddressForGeographicCoordinates(Position position) async
-  {
-  await RequestAssistant.receiveRequest(apiUrl);
+  static Future<String> searchAddressForGeographicCoOrdinates(Position position, context) async
   {
     String apiUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$mapKey";
+    String humanReadableAddress = "";
+    var requestResponse = await RequestAssistant.receiveRequest(apiUrl);
+    if (requestResponse != "Error Occured,Failed. No response.")
+    {
+      humanReadableAddress = requestResponse["results"][0]["formatted_address"];
+
+
+    }
+    return humanReadableAddress;
   }
+
+
+
   static void readCurrentOnlineUserInfo() async
   {
     currentFirebaseUser = fAuth.currentUser;
