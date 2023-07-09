@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,12 +9,14 @@ import 'package:shringar1_app/assistants/assistant_methods.dart';
 import 'package:shringar1_app/assistants/geofire_assistant.dart';
 import 'package:shringar1_app/global/global.dart';
 import 'package:shringar1_app/global/map_key.dart';
+import 'package:shringar1_app/main.dart';
 import 'package:shringar1_app/models/user_model.dart';
 import 'package:shringar1_app/models/directions.dart';
 import 'package:shringar1_app/infoHandler/app_info.dart';
 import 'package:shringar1_app/models/active_nearby_available_beauticians.dart';
 import 'package:shringar1_app/widgets/my_drawer.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:shringar1_app/mainScreens/search_services_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -56,8 +59,8 @@ class _MainScreenState extends State<MainScreen> {
   bool openNavigationDrawer = true;
 
   bool activeNearbyBeauticianKeysLoaded = false;
-  BitmapDescriptor? activeNearbyIcon;
-
+  //BitmapDescriptor? activeNearbyIcon;
+  List<ActiveNearbyAvailableBeauticians> onlineNearByAvailableBeauticiansList = [];
   Future<void> checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
 
@@ -91,23 +94,50 @@ class _MainScreenState extends State<MainScreen> {
     initializeGeoFireListener();
   }
 
+  void saveSelectedService(String service) {
+    setState(() {
+      selectedServiceType = service;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     checkIfLocationPermissionAllowed();
   }
-
+saveServiceRequestInformation()
+{
+  //save the service request information
+ onlineNearByAvailableBeauticiansList = GeoFireAssistant.activeNearbyAvailableBeauticiansList;
+ searchNearestOnlineBeauticians();
+}
+  searchNearestOnlineBeauticians() async
+  {
+    if(onlineNearByAvailableBeauticiansList.length == 0)
+      {
+        //cancel the Request Information
+        setState(() {
+          polyLineSet.clear();
+          markersSet.clear();
+          circlesSet.clear();
+          pLineCoOrdinatesList.clear();
+        });
+        Fluttertoast.showToast(msg: "No online Nearest Beautician available");
+        MyApp.restartApp(context);
+        return;
+      }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.red.shade300,
       ),
       drawer: Container(
         width: 260,
         child: Theme(
           data: Theme.of(context).copyWith(
-            canvasColor: Colors.black,
+            canvasColor: Colors.white,
           ),
           child: MyDrawer(
             name: userModelCurrentInfo!.name,
@@ -137,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
 
           // UI for searching location
           Positioned(
-            bottom: 8,
+            bottom: 0,
             left: 0,
             right: 0,
             child: AnimatedSize(
@@ -146,7 +176,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Container(
                 height: searchLocationContainerHeight,
                 decoration: const BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20),
                     topLeft: Radius.circular(20),
@@ -164,7 +194,7 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           const Icon(
                             Icons.add_location_alt_outlined,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                           const SizedBox(width: 12.0),
                           Column(
@@ -173,7 +203,7 @@ class _MainScreenState extends State<MainScreen> {
                               const Text(
                                 "Location",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 16,
                                 ),
                               ),
@@ -182,7 +212,7 @@ class _MainScreenState extends State<MainScreen> {
                                     ? Provider.of<AppInfo>(context).userHomeLocation!.locationName!.substring(0, 24) + "..."
                                     : "not getting address",
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 14,
                                 ),
                               ),
@@ -199,40 +229,76 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       const SizedBox(height: 16.0),
 
-                      DropdownButton(
-                        iconSize: 45,
-                        dropdownColor: Colors.grey,
-                        hint: const Text(
-                          "please choose service type",
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        value: selectedServiceType,
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedServiceType = newValue.toString();
-                          });
-                        },
-                        items: serviceTypeList.map((service) {
-                          return DropdownMenuItem(
-                            child: Text(
-                              service,
-                              style: const TextStyle(color: Colors.white),
+                      GestureDetector(
+                        onTap: () async {
+                          var selectedService = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchServicesScreen(),
                             ),
-                            value: service,
                           );
-                        }).toList(),
+                          if (selectedService != null) {
+                            setState(() {
+                              selectedServiceType = selectedService;
+                            });
+
+                            // Save the selected service
+                            saveSelectedService(selectedService);
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.add_box_sharp,
+                              color: Colors.black,
+                            ),
+                            const SizedBox(width: 12.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Service",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  selectedServiceType != null
+                                      ? selectedServiceType!
+                                      : "Select a service",
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 10.0),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16.0),
 
                       ElevatedButton(
                         child: const Text("Request For Service"),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (Provider.of<AppInfo>(context, listen: false).userHomeLocation != null &&
+                              selectedServiceType != null) {
+                            saveServiceRequestInformation();
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Please select service");
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: Colors.red.shade300,
                           textStyle: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,

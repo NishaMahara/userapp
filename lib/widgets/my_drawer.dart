@@ -23,13 +23,13 @@ class _MyDrawerState extends State<MyDrawer> {
             height: 165,
             color: Colors.grey,
             child: DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.black),
+              decoration: const BoxDecoration(color: Colors.white),
               child: Row(
                 children: [
                   const Icon(
                     Icons.person,
                     size: 80,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   const SizedBox(width: 16,),
                   Column(
@@ -39,7 +39,7 @@ class _MyDrawerState extends State<MyDrawer> {
                         widget.name.toString(),
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -49,7 +49,7 @@ class _MyDrawerState extends State<MyDrawer> {
                         widget.email.toString(),
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
 
@@ -68,11 +68,11 @@ class _MyDrawerState extends State<MyDrawer> {
 
             },
             child: const ListTile(
-              leading: Icon(Icons.history, color: Colors.white,),
+              leading: Icon(Icons.history, color: Colors.black,),
               title: Text(
                 "History",
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
               ),
             ),
@@ -83,11 +83,11 @@ class _MyDrawerState extends State<MyDrawer> {
 
             },
             child: const ListTile(
-              leading: Icon(Icons.person, color: Colors.white,),
+              leading: Icon(Icons.person, color: Colors.black,),
               title: Text(
                 "Visit Profile",
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
               ),
             ),
@@ -98,11 +98,11 @@ class _MyDrawerState extends State<MyDrawer> {
 
             },
             child: const ListTile(
-              leading: Icon(Icons.info, color: Colors.white,),
+              leading: Icon(Icons.info, color: Colors.black,),
               title: Text(
                 "About",
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
               ),
             ),
@@ -115,11 +115,11 @@ class _MyDrawerState extends State<MyDrawer> {
 
             },
             child: const ListTile(
-              leading: Icon(Icons.logout, color: Colors.white,),
+              leading: Icon(Icons.logout, color: Colors.black,),
               title: Text(
                 "Sign out",
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
               ),
             ),
