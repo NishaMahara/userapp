@@ -1,8 +1,8 @@
 class ActiveNearbyAvailableBeauticians
 {
-  Stream? beauticianId;
+  String? beauticianId;
   double? locationLatitude;
-  double? locationLongitude;
+  double?locationLongitude;
 
   ActiveNearbyAvailableBeauticians({
     this.beauticianId,

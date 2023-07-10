@@ -61,8 +61,8 @@ class _MainScreenState extends State<MainScreen> {
   bool openNavigationDrawer = true;
 
   bool activeNearbyBeauticianKeysLoaded = false;
-  //BitmapDescriptor? activeNearbyIcon;
   List<ActiveNearbyAvailableBeauticians> onlineNearByAvailableBeauticiansList = [];
+
   Future<void> checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
 
@@ -88,6 +88,7 @@ class _MainScreenState extends State<MainScreen> {
     newGoogleMapController!.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition),
     );
+
     String humanReadableAddress = await AssistantMethods.searchAddressForGeographicCoOrdinates(
       userCurrentPosition!,
       context,
@@ -96,63 +97,58 @@ class _MainScreenState extends State<MainScreen> {
     initializeGeoFireListener();
   }
 
-
-
   @override
   void initState() {
     super.initState();
     checkIfLocationPermissionAllowed();
   }
-saveServiceRequestInformation()
-{
-  //save the service request information
- onlineNearByAvailableBeauticiansList = GeoFireAssistant.activeNearbyAvailableBeauticiansList;
- searchNearestOnlineBeauticians();
-}
-  searchNearestOnlineBeauticians() async
-  {
-    //no online Beautician available
-    if(onlineNearByAvailableBeauticiansList.length == 0)
-      {
-        //cancel the Request Information
-        setState(() {
-          polyLineSet.clear();
-          markersSet.clear();
-          circlesSet.clear();
-          pLineCoOrdinatesList.clear();
-        });
-        Fluttertoast.showToast(msg: "No Beauticians available,Search again after some time");
-        // Future.delayed(Duration(milliseconds: 7000),()
-        // {
-        //   MyApp.restartApp(context);
-        // });
-        return;
-      }
 
-    //Beauticians available
-     await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
-     Navigator.push(context, MaterialPageRoute(builder: (c)=> SelectNearestActiveBeauticiansScreen()));
+  void saveServiceRequestInformation() {
+    // Save the service request information
+    onlineNearByAvailableBeauticiansList =
+        GeoFireAssistant.activeNearbyAvailableBeauticiansList;
+    searchNearestOnlineBeauticians();
+  }
+
+  searchNearestOnlineBeauticians() async {
+    // No online beautician available
+    if (onlineNearByAvailableBeauticiansList.isEmpty) {
+      // Cancel the request information
+      setState(() {
+        polyLineSet.clear();
+        markersSet.clear();
+        circlesSet.clear();
+        pLineCoOrdinatesList.clear();
+      });
+      Fluttertoast.showToast(msg: "No beauticians available. Please try again later.");
+      return;
     }
-  retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async
-  {
+
+    // Beauticians available
+    await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
+    Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen()));
+  }
+
+  retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child("beauticians");
-    for (int i = 0; i<onlineNearestBeauticiansList.length; i++) {
+    for (int i = 0; i < onlineNearestBeauticiansList.length; i++) {
       await ref
           .child(onlineNearestBeauticiansList[i].beauticianId.toString())
           .once()
-          .then((dataSnapshot)
-      {
+          .then((dataSnapshot) {
         var beauticianKeyInfo = dataSnapshot.snapshot.value;
         bList.add(beauticianKeyInfo);
-        print("BeauticianKey Information="+ bList.toString());
+        print("BeauticianKey Information=" + bList.toString());
       });
     }
   }
+
   void saveSelectedService(String service) {
     setState(() {
       selectedServiceType = service;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,6 +175,9 @@ saveServiceRequestInformation()
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
             initialCameraPosition: _kGooglePlex,
+            markers: markersSet,
+            circles: circlesSet,
+            polylines: polyLineSet,
             onMapCreated: (GoogleMapController controller) {
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
@@ -189,6 +188,7 @@ saveServiceRequestInformation()
 
               locateUserPosition();
             },
+
           ),
 
           // UI for searching location
@@ -319,8 +319,7 @@ saveServiceRequestInformation()
                               selectedServiceType != null) {
                             saveServiceRequestInformation();
                           } else {
-                            Fluttertoast.showToast(
-                                msg: "Please select service");
+                            Fluttertoast.showToast(msg: "Please select a service");
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -342,14 +341,13 @@ saveServiceRequestInformation()
     );
   }
 
-  void initializeGeoFireListener()
-  {
+  void initializeGeoFireListener() {
     Geofire.initialize("activeBeauticians");
     Geofire.queryAtLocation(
       userCurrentPosition!.latitude,
       userCurrentPosition!.longitude,
       10,
-    )?.listen((map) {
+    )!.listen((map) {
       print(map);
       if (map != null) {
         var callBack = map['callBack'];
@@ -366,7 +364,7 @@ saveServiceRequestInformation()
             activeNearbyAvailableBeauticians.beauticianId = map['key'];
             GeoFireAssistant.activeNearbyAvailableBeauticiansList
                 .add(activeNearbyAvailableBeauticians);
-            if (activeNearbyBeauticianKeysLoaded == true) {
+            if (activeNearbyBeauticianKeysLoaded) {
               displayActiveBeauticiansOnUsersMap();
             }
             break;
@@ -410,21 +408,22 @@ saveServiceRequestInformation()
       for (ActiveNearbyAvailableBeauticians eachBeautician
       in GeoFireAssistant.activeNearbyAvailableBeauticiansList) {
         LatLng eachBeauticianActivePosition =
-        LatLng(eachBeautician.locationLatitude!, eachBeautician.locationLongitude!);
+        LatLng(eachBeautician.locationLatitude!,
+            eachBeautician.locationLongitude!);
         Marker marker = Marker(
-          markerId: MarkerId("Beautician${eachBeautician.beauticianId.toString()}"),
+          markerId: MarkerId(eachBeautician.beauticianId!),
           position: eachBeauticianActivePosition,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueOrange),
           rotation: 360,
         );
 
         beauticiansMarkerSet.add(marker);
       }
-      //setState(() {
+      setState(() {
         markersSet = beauticiansMarkerSet;
-        displayActiveBeauticiansOnUsersMap();
-     // });
+      });
     });
+
   }
 }
-
