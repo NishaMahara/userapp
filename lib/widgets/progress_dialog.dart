@@ -18,7 +18,7 @@ class _ProgressDialogState extends State<ProgressDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.white,
       child: Container(
         margin: EdgeInsets.all(16.0),
         decoration: BoxDecoration(

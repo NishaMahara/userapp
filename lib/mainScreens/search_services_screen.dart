@@ -6,6 +6,7 @@ class SearchServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red.shade300,
         title: const Text('Search Services'),
       ),
       body: ListView(

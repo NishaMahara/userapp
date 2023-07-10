@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +11,7 @@ import 'package:shringar1_app/assistants/geofire_assistant.dart';
 import 'package:shringar1_app/global/global.dart';
 import 'package:shringar1_app/global/map_key.dart';
 import 'package:shringar1_app/main.dart';
+import 'package:shringar1_app/mainScreens/select_nearest_active_beautician_screen.dart';
 import 'package:shringar1_app/models/user_model.dart';
 import 'package:shringar1_app/models/directions.dart';
 import 'package:shringar1_app/infoHandler/app_info.dart';
@@ -94,11 +96,7 @@ class _MainScreenState extends State<MainScreen> {
     initializeGeoFireListener();
   }
 
-  void saveSelectedService(String service) {
-    setState(() {
-      selectedServiceType = service;
-    });
-  }
+
 
   @override
   void initState() {
@@ -113,6 +111,7 @@ saveServiceRequestInformation()
 }
   searchNearestOnlineBeauticians() async
   {
+    //no online Beautician available
     if(onlineNearByAvailableBeauticiansList.length == 0)
       {
         //cancel the Request Information
@@ -122,10 +121,37 @@ saveServiceRequestInformation()
           circlesSet.clear();
           pLineCoOrdinatesList.clear();
         });
-        Fluttertoast.showToast(msg: "No online Nearest Beautician available");
-        MyApp.restartApp(context);
+        Fluttertoast.showToast(msg: "No Beauticians available,Search again after some time");
+        // Future.delayed(Duration(milliseconds: 7000),()
+        // {
+        //   MyApp.restartApp(context);
+        // });
         return;
       }
+
+    //Beauticians available
+     await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
+     Navigator.push(context, MaterialPageRoute(builder: (c)=> SelectNearestActiveBeauticiansScreen()));
+    }
+  retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async
+  {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child("beauticians");
+    for (int i = 0; i<onlineNearestBeauticiansList.length; i++) {
+      await ref
+          .child(onlineNearestBeauticiansList[i].beauticianId.toString())
+          .once()
+          .then((dataSnapshot)
+      {
+        var beauticianKeyInfo = dataSnapshot.snapshot.value;
+        bList.add(beauticianKeyInfo);
+        print("BeauticianKey Information="+ bList.toString());
+      });
+    }
+  }
+  void saveSelectedService(String service) {
+    setState(() {
+      selectedServiceType = service;
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -394,9 +420,10 @@ saveServiceRequestInformation()
 
         beauticiansMarkerSet.add(marker);
       }
-      setState(() {
+      //setState(() {
         markersSet = beauticiansMarkerSet;
-      });
+        displayActiveBeauticiansOnUsersMap();
+     // });
     });
   }
 }
