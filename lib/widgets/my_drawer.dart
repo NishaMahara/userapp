@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shringar1_app/global/global.dart';
+import 'package:shringar1_app/mainScreens/profile_screen.dart';
 import 'package:shringar1_app/splashScreen/splash_screen.dart';
 class MyDrawer extends StatefulWidget {
   String? name;
@@ -79,7 +80,9 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
 
           GestureDetector(
-            onTap: () {
+            onTap: () 
+            {
+              Navigator.push(context, MaterialPageRoute(builder: (c)=> ProfileScreen()));
 
             },
             child: const ListTile(

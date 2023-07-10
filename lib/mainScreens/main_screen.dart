@@ -105,6 +105,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void saveServiceRequestInformation() {
     // Save the service request information
+    
     onlineNearByAvailableBeauticiansList =
         GeoFireAssistant.activeNearbyAvailableBeauticiansList;
     searchNearestOnlineBeauticians();
@@ -178,6 +179,7 @@ class _MainScreenState extends State<MainScreen> {
             markers: markersSet,
             circles: circlesSet,
             polylines: polyLineSet,
+           
             onMapCreated: (GoogleMapController controller) {
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
