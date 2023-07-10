@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -62,6 +63,7 @@ class _MainScreenState extends State<MainScreen> {
 
   bool activeNearbyBeauticianKeysLoaded = false;
   List<ActiveNearbyAvailableBeauticians> onlineNearByAvailableBeauticiansList = [];
+  DatabaseReference?  referenceServiceRequest;
 
   Future<void> checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
@@ -115,6 +117,8 @@ class _MainScreenState extends State<MainScreen> {
     // No online beautician available
     if (onlineNearByAvailableBeauticiansList.isEmpty) {
       // Cancel the request information
+      referenceServiceRequest!.remove();
+
       setState(() {
         polyLineSet.clear();
         markersSet.clear();
@@ -122,12 +126,16 @@ class _MainScreenState extends State<MainScreen> {
         pLineCoOrdinatesList.clear();
       });
       Fluttertoast.showToast(msg: "No beauticians available. Please try again later.");
-      return;
+
+      Future.delayed(const Duration(milliseconds: 7000),()
+      {
+        SystemNavigator.pop();
+      });
     }
 
     // Beauticians available
     await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
-    Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen(referenceServiceRequest: referenceServiceRequest )));
   }
 
   retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async {
