@@ -1,10 +1,13 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 
 import '../global/global.dart';
 class SelectNearestActiveBeauticiansScreen extends StatefulWidget {
-  const SelectNearestActiveBeauticiansScreen({super.key});
+  DatabaseReference? referenceServiceRequest;
+  SelectNearestActiveBeauticiansScreen({this.referenceServiceRequest});
 
   @override
   State<SelectNearestActiveBeauticiansScreen> createState() => _SelectNearestActiveBeauticiansScreenState();
@@ -14,22 +17,25 @@ class _SelectNearestActiveBeauticiansScreenState extends State<SelectNearestActi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.white,
           title: const Text(
             "Nearest Online Beauticians",
             style: TextStyle(
               fontSize: 18,
+              color: Colors.black
             ),
           ),
           leading: IconButton(
               icon: const Icon(
-                  Icons.close, color: Colors.white
+                  Icons.close, color: Colors.black
               ),
               onPressed: () {
-                //remove the ride request from database
-                SystemNavigator.pop();
+                //cancle the ride request from database
+                widget.referenceServiceRequest!.remove();
+                Fluttertoast.showToast(msg:"Request Cancelled");
+                 SystemNavigator.pop();
               }
           )
 
@@ -38,7 +44,7 @@ class _SelectNearestActiveBeauticiansScreenState extends State<SelectNearestActi
         itemCount: bList.length,
         itemBuilder: (BuildContext context, int index) {
           return Card(
-            color: Colors.grey,
+            color: Colors.green,
             elevation: 3,
             shadowColor: Colors.green,
             margin: EdgeInsets.all(8),
@@ -55,8 +61,8 @@ class _SelectNearestActiveBeauticiansScreenState extends State<SelectNearestActi
                   Text(
                     bList[index]["name"],
                     style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
+                      fontSize: 20,
+                      color: Colors.white,
                     ),
                   ),
                 //   Text(
@@ -66,15 +72,15 @@ class _SelectNearestActiveBeauticiansScreenState extends State<SelectNearestActi
                 //       color: Colors.white,
                 //     ),
                 //   )
-                  SmoothStarRating(
-                    rating: 3.5,
-                    color: Colors.black,
-                    borderColor: Colors.black,
-                    allowHalfRating: true,
-                    starCount: 5,
-                    size: 15,
-
-                  )
+                //   SmoothStarRating(
+                //     rating: 3.5,
+                //     color: Colors.white,
+                //     borderColor: Colors.black,
+                //     allowHalfRating: true,
+                //     starCount: 5,
+                //     size: 15,
+                //
+                //   )
                  ],
               ),
             ),

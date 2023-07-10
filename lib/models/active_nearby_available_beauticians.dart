@@ -10,3 +10,4 @@ class ActiveNearbyAvailableBeauticians
     this.locationLongitude,
 });
 }
+//worked
