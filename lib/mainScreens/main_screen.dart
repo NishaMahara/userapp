@@ -135,16 +135,47 @@ class _MainScreenState extends State<MainScreen> {
 
     // Beauticians available
     await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
-    Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen(referenceServiceRequest: referenceServiceRequest )));
-  }
+     var response = await Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen(referenceServiceRequest: referenceServiceRequest )));
+     if(response == "beauticianchoosed")
+     {
+FirebaseDatabase.instance.ref()
+    .child("beauticians")
+    .child(chosenBeauticianId!)
+        .once()
+        .then((snap)
+    {
+      if(snap.snapshot.value != null)
+        {
+      //sent notification to that Beautician
+          sendNotificationToBeauticianNow(chosenBeauticianId!);
+        }
+      else
+        {
+          Fluttertoast.showToast(msg:"This Beautician not exist.");
+        }
+    });
+     }
 
+  }
+  sendNotificationToBeauticianNow(String chosenBeauticianId)
+  {
+    //assign ride request id to new ride request ststue in
+
+    FirebaseDatabase.instance.ref()
+        .child("beauticians")
+        .child(chosenBeauticianId!)
+        .child("newServiceStatus")
+        .set(referenceServiceRequest!.key);
+   //automate push notification
+  }
   retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child("beauticians");
     for (int i = 0; i < onlineNearestBeauticiansList.length; i++) {
       await ref
           .child(onlineNearestBeauticiansList[i].beauticianId.toString())
           .once()
-          .then((dataSnapshot) {
+          .then((dataSnapshot)
+      {
         var beauticianKeyInfo = dataSnapshot.snapshot.value;
         bList.add(beauticianKeyInfo);
         print("BeauticianKey Information=" + bList.toString());
@@ -326,9 +357,14 @@ class _MainScreenState extends State<MainScreen> {
                         child: const Text("Request For Service"),
                         onPressed: () {
                           if (Provider.of<AppInfo>(context, listen: false).userHomeLocation != null &&
-                              selectedServiceType != null) {
+                              selectedServiceType != null)
+                          {
+
                             saveServiceRequestInformation();
-                          } else {
+
+                          }
+
+                          else {
                             Fluttertoast.showToast(msg: "Please select a service");
                           }
                         },

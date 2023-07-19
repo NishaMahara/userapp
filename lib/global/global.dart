@@ -8,3 +8,4 @@ final FirebaseAuth fAuth = FirebaseAuth.instance;
 User? currentFirebaseUser;
 UserModel? userModelCurrentInfo;
 List bList = []; //beauticianKeys Info
+String? chosenBeauticianId="";

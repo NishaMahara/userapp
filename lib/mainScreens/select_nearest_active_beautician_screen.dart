@@ -43,45 +43,54 @@ class _SelectNearestActiveBeauticiansScreenState extends State<SelectNearestActi
       body: ListView.builder(
         itemCount: bList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Card(
-            color: Colors.green,
-            elevation: 3,
-            shadowColor: Colors.green,
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              // leading: Padding(
-              //   padding: const EdgeInsets.all(2.0),
-              //   child: Image.asset(
-              //   "images/" +bList[index]["beauticians_details"]["type"].toString() + ".png",
-              //   ),
-              // ) ,
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    bList[index]["name"],
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+          return GestureDetector(
+            onTap:()
+          {
+            setState(() {
+              chosenBeauticianId = bList[index]["id"].toString();
+            });
+            Navigator.pop(context, "beauticianChoosed");
+            },
+            child: Card(
+              color: Colors.green,
+              elevation: 3,
+              shadowColor: Colors.green,
+              margin: EdgeInsets.all(8),
+              child: ListTile(
+                // leading: Padding(
+                //   padding: const EdgeInsets.all(2.0),
+                //   child: Image.asset(
+                //   "images/" +bList[index]["beauticians_details"]["type"].toString() + ".png",
+                //   ),
+                // ) ,
+                title: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      bList[index]["name"],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                //   Text(
-                //     bList[index]["beautician_details"]["Beautician_type"],
-                //     style: const TextStyle(
-                //       fontSize: 12,
-                //       color: Colors.white,
-                //     ),
-                //   )
-                //   SmoothStarRating(
-                //     rating: 3.5,
-                //     color: Colors.white,
-                //     borderColor: Colors.black,
-                //     allowHalfRating: true,
-                //     starCount: 5,
-                //     size: 15,
-                //
-                //   )
-                 ],
+                  //   Text(
+                  //     bList[index]["beautician_details"]["Beautician_type"],
+                  //     style: const TextStyle(
+                  //       fontSize: 12,
+                  //       color: Colors.white,
+                  //     ),
+                  //   )
+                  //   SmoothStarRating(
+                  //     rating: 3.5,
+                  //     color: Colors.white,
+                  //     borderColor: Colors.black,
+                  //     allowHalfRating: true,
+                  //     starCount: 5,
+                  //     size: 15,
+                  //
+                  //   )
+                   ],
+                ),
               ),
             ),
           );
