@@ -107,7 +107,38 @@ class _MainScreenState extends State<MainScreen> {
 
   void saveServiceRequestInformation() {
     // Save the service request information
-    
+    referenceServiceRequest = FirebaseDatabase.instance.ref().child("All Service Requests").push();//hjasdg8
+    var usersLocation = Provider.of<AppInfo>(context, listen: false).userHomeLocation;
+   // var requestedService= Provider.of<AppInfo>(context, listen: false). serviceRequested;
+
+    Map usersLocationMap=
+    {
+      "latitude": usersLocation!.locationLatitude.toString(),
+      "longitude": usersLocation!.locationLongitude.toString(),
+    };
+
+    // Map requestedServiceMap=
+    // {
+    //   "latitude": usersLocation!.locationLatitude.toString(),
+    //   "longitude": usersLocation!.locationLongitude.toString(),
+    // };
+     Map userInformationMap =
+     {
+       "Address": usersLocationMap,
+       //"service": requestedServiceMap,
+       "time": DateTime.now().toString(),
+       "userName": userModelCurrentInfo!.name,
+       "userPhone": userModelCurrentInfo!.phone,
+       "userAddress": usersLocation.locationName,
+       "beauticianId": "waiting",
+       "selected_service": selectedServiceType,
+       //"requestedService": requestedService
+     };
+
+     referenceServiceRequest!.set(userInformationMap);
+
+
+
     onlineNearByAvailableBeauticiansList =
         GeoFireAssistant.activeNearbyAvailableBeauticiansList;
     searchNearestOnlineBeauticians();
