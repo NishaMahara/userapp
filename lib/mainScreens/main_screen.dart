@@ -164,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
     // Beauticians available
     await retrieveOnlineBeauticiansInformation(onlineNearByAvailableBeauticiansList);
      var response = await Navigator.push(context, MaterialPageRoute(builder: (c) => SelectNearestActiveBeauticiansScreen(referenceServiceRequest: referenceServiceRequest )));
-     if(response == "beauticianchoosed")
+     if(response == "beauticianChoosed")
      {
 FirebaseDatabase.instance.ref()
     .child("beauticians")
@@ -187,7 +187,7 @@ FirebaseDatabase.instance.ref()
   }
   sendNotificationToBeauticianNow(String chosenBeauticianId)
   {
-    //assign ride request id to new ride request ststue in
+    //assign service request id to new service request status in beauticians parentrs node for that specific choosen beautician
 
     FirebaseDatabase.instance.ref()
         .child("beauticians")
