@@ -91,10 +91,7 @@ class _MainScreenState extends State<MainScreen> {
       CameraUpdate.newCameraPosition(cameraPosition),
     );
 
-    String humanReadableAddress = await AssistantMethods.searchAddressForGeographicCoOrdinates(
-      userCurrentPosition!,
-      context,
-    );
+    String humanReadableAddress = await AssistantMethods.searchAddressForGeographicCoOrdinates(userCurrentPosition!, context,);
     print("this is your address = " + humanReadableAddress);
     initializeGeoFireListener();
   }

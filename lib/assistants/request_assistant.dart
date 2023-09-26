@@ -16,7 +16,7 @@ class RequestAssistant {
       }
       else
       {
-        return "Error occured,Failed. No Response";
+        return "Error occured,Failed. No Response.";
       }
     }
     catch(exp)
