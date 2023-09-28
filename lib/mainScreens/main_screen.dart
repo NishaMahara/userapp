@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +46,9 @@ class _MainScreenState extends State<MainScreen> {
 
   GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
   double searchLocationContainerHeight = 220;
+  double waitingResponseFromBeaiuticianContainerHeight = 0;
+  double assignedBeauticianInfoContainerHeight = 0;
+
 
   Position? userCurrentPosition;
   var geoLocator = Geolocator();
@@ -64,6 +69,9 @@ class _MainScreenState extends State<MainScreen> {
   bool activeNearbyBeauticianKeysLoaded = false;
   List<ActiveNearbyAvailableBeauticians> onlineNearByAvailableBeauticiansList = [];
   DatabaseReference?  referenceServiceRequest;
+
+  //status
+  String beauticianserviceStatus="Beautician is comming";
 
   Future<void> checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
@@ -176,6 +184,48 @@ FirebaseDatabase.instance.ref()
         {
       //sent notification to that Beautician
           sendNotificationToBeauticianNow(chosenBeauticianId!);
+
+          //waiting response from beautician ui
+          showWaitingResponseFRomBeauticianUI();
+
+          //response from beautician
+
+
+          FirebaseDatabase.instance.ref()
+              .child("beauticians")
+              .child(chosenBeauticianId!)
+               .child("newServiceStatus")
+
+              .onValue.listen((eventSnapshot)
+              {
+                //how
+
+                //beautician has cancel the service request :: push notification
+                //(newserviceStatus = idle)
+                if(eventSnapshot.snapshot.value == "idle")
+                  {
+                      Fluttertoast.showToast(msg: "beautician has cancelled yr request");
+                      Future.delayed(const Duration(milliseconds: 3000), ()
+                          {
+                            Fluttertoast.showToast(msg: "restart app now.");
+                            SystemNavigator.pop();
+                          });
+
+                  }
+
+
+
+                // beautician has accept the service request :: push notification
+                //(newserviceStatus = accepted)
+                if(eventSnapshot.snapshot.value == "accepted")
+                {
+                    //design and display ui for displaying assigned beautician information
+                  showUIForAssignedBeauticianInfo();
+                }
+
+
+              });
+
         }
       else
         {
@@ -185,8 +235,26 @@ FirebaseDatabase.instance.ref()
      }
 
   }
-  sendNotificationToBeauticianNow(String chosenBeauticianId)
+showUIForAssignedBeauticianInfo() {
+  setState(() {
+    searchLocationContainerHeight = 0;
+    waitingResponseFromBeaiuticianContainerHeight = 0;
+    assignedBeauticianInfoContainerHeight = 220;
+  });
+}
+
+
+  showWaitingResponseFRomBeauticianUI()
   {
+    setState(() {
+
+      searchLocationContainerHeight = 0;
+      waitingResponseFromBeaiuticianContainerHeight = 200;
+
+    });
+  }
+
+  sendNotificationToBeauticianNow(String chosenBeauticianId) {
     //assign service request id to new service request status in beauticians parentrs node for that specific choosen beautician
 
     FirebaseDatabase.instance.ref()
@@ -194,7 +262,36 @@ FirebaseDatabase.instance.ref()
         .child(chosenBeauticianId!)
         .child("newServiceStatus")
         .set(referenceServiceRequest!.key);
-   //automate push notification
+    //automate push notification
+
+    FirebaseDatabase.instance.ref()
+        .child("beauticians")
+        .child(chosenBeauticianId!)
+        .child("chosenBeauticianId")
+        .child("token").once().then((snap)
+    {
+
+      if(snap.snapshot.value != null) {
+        //String tokendeviceRegistrationToken = snap.snapshot.value.toString();
+
+        String deviceRegistrationToken = snap.snapshot.value.toString();
+
+        //send notification now
+
+        AssistantMethods.sendNotificationToBeautician(
+            deviceRegistrationToken,
+            referenceServiceRequest!.key.toString(),
+            context,
+        );
+
+Fluttertoast.showToast(msg: "Notification sent successsfully");
+
+      }
+      else{
+        Fluttertoast.showToast(msg: "please choose the another Beautician.");
+        return;
+      }
+    });
   }
   retrieveOnlineBeauticiansInformation(List onlineNearestBeauticiansList) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child("beauticians");
@@ -410,7 +507,158 @@ FirebaseDatabase.instance.ref()
               ),
             ),
           ),
-        ],
+
+          //ui for waitnig response from beautician
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child:Container(
+              height:waitingResponseFromBeaiuticianContainerHeight,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                    ),
+                  ),
+              child:Center(
+                child: AnimatedTextKit(
+                  animatedTexts: [
+                    FadeAnimatedText(
+                      'waiting from response \nfrom beautician',
+                      duration: const Duration(seconds: 6),
+                      textStyle: const TextStyle(fontSize: 30.0, color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    ScaleAnimatedText(
+                      'please wait....',
+                      duration: const Duration(seconds: 10),
+                      textStyle: const TextStyle(fontSize: 32.0, color:Colors.white, fontFamily: 'Canterbury'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          //ui for the displaying beautician information
+
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child:Container(
+              height: assignedBeauticianInfoContainerHeight,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 20,
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:[
+                      //status of
+                      Text(
+                        beauticianserviceStatus,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color:Colors.white,
+                        ),
+                      ),
+                          const SizedBox(height: 24.0,
+                          ),
+                     const Divider(
+                        height: 2,
+                        thickness: 2,
+                        color:Colors.white,
+                      ),
+
+                      const SizedBox(height: 24,
+                      ),
+
+                     // beautician experience details
+
+                      Text(
+                         "5 years experience",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color:Colors.white,
+                          ),
+                      ),
+
+                      //beautician name
+                      const SizedBox(height: 4,
+                      ),
+
+                      const Divider(
+                        height: 2,
+                        thickness: 2,
+                        color:Colors.white,
+                      ),
+
+
+
+                      Text(
+                          "priya pant",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color:Colors.white,
+                          ),
+                      ),
+
+
+                      const SizedBox(height: 24,
+                      ),
+
+                      //call beautician button
+
+                      Center(
+                        child: ElevatedButton.icon(
+                            onPressed: ()
+                         {
+
+                         },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                          ),
+                         icon:const Icon(
+                            Icons.phone_android,
+                          color:Colors.black87,
+                          size: 22,
+                         ),
+                          label: const Text(
+                            "call beautician",
+                            style:TextStyle(
+                              color:Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+
+
+
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+
+          ]
       ),
     );
   }
